@@ -13,6 +13,10 @@ const CHROME_JA3 =
 const USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
 
+// Optional proxy — set PROXY_URL env var to route all DoorDash traffic through it.
+// Format: http://host:port  or  http://user:pass@host:port
+const PROXY_URL = process.env.PROXY_URL ?? "";
+
 export interface HttpResponse {
   status: number;
   body: unknown;
@@ -96,6 +100,11 @@ export class HttpClient {
       headers,
       disableRedirect: opts.disableRedirect ?? false,
     };
+
+    // Route through proxy if configured
+    if (PROXY_URL) {
+      requestOpts.proxy = PROXY_URL;
+    }
 
     let bodyStr: string | undefined;
     if (opts.body !== undefined) {

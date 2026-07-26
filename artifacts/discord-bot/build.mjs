@@ -1,10 +1,10 @@
 /**
  * Build script — bundles the Discord bot (including @workspace/db) into
- * a single dist/index.mjs that only requires real npm packages at runtime.
+ * a single dist/index.cjs that only requires real npm packages at runtime.
  *
  * Usage:
  *   npm run build     (or: node build.mjs)
- *   npm start         (runs: node dist/index.mjs)
+ *   npm start         (runs: node dist/index.cjs)
  */
 
 import { build } from "esbuild";
@@ -23,8 +23,8 @@ await build({
   bundle: true,
   platform: "node",
   target: "node20",
-  format: "esm",
-  outfile: "dist/index.mjs",
+  format: "cjs",
+  outfile: "dist/index.cjs",
 
   // These npm packages stay as real dependencies — installed via npm install.
   // Everything else (including @workspace/db) is bundled inline.
@@ -57,5 +57,5 @@ await build({
 mkdirSync("dist/queries", { recursive: true });
 cpSync("queries", "dist/queries", { recursive: true });
 
-console.log("✓ Build complete → dist/index.mjs");
+console.log("✓ Build complete → dist/index.cjs");
 console.log("✓ GraphQL queries copied → dist/queries/");
