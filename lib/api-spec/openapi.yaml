@@ -10,13 +10,14 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: dashboard
+    description: Owner dashboard endpoints (requires x-dashboard-token header)
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +25,285 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Overall bot statistics
+      parameters:
+        - in: header
+          name: x-dashboard-token
+          schema: { type: string }
+          required: true
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+        "401":
+          description: Unauthorized
+
+  /dashboard/orders:
+    get:
+      operationId: getDashboardOrders
+      tags: [dashboard]
+      summary: Order history
+      parameters:
+        - in: header
+          name: x-dashboard-token
+          schema: { type: string }
+          required: true
+        - in: query
+          name: limit
+          schema: { type: integer, default: 50 }
+        - in: query
+          name: offset
+          schema: { type: integer, default: 0 }
+      responses:
+        "200":
+          description: Orders list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+
+  /dashboard/accounts:
+    get:
+      operationId: getDashboardAccounts
+      tags: [dashboard]
+      summary: DoorDash accounts
+      parameters:
+        - in: header
+          name: x-dashboard-token
+          schema: { type: string }
+          required: true
+      responses:
+        "200":
+          description: Accounts list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DdAccount"
+
+  /dashboard/accounts/{id}/toggle:
+    patch:
+      operationId: toggleDashboardAccount
+      tags: [dashboard]
+      summary: Toggle DoorDash account active state
+      parameters:
+        - in: header
+          name: x-dashboard-token
+          schema: { type: string }
+          required: true
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToggleResult"
+
+  /dashboard/users:
+    get:
+      operationId: getDashboardUsers
+      tags: [dashboard]
+      summary: Authorized Discord users
+      parameters:
+        - in: header
+          name: x-dashboard-token
+          schema: { type: string }
+          required: true
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuthorizedUser"
+
+  /dashboard/touches:
+    get:
+      operationId: getDashboardTouches
+      tags: [dashboard]
+      summary: Member touch vouches with photos
+      parameters:
+        - in: header
+          name: x-dashboard-token
+          schema: { type: string }
+          required: true
+      responses:
+        "200":
+          description: Touches list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Touch"
+
+  /dashboard/credits:
+    get:
+      operationId: getDashboardCredits
+      tags: [dashboard]
+      summary: Credit balances per Discord user
+      parameters:
+        - in: header
+          name: x-dashboard-token
+          schema: { type: string }
+          required: true
+      responses:
+        "200":
+          description: Credits list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserCredit"
+
+  /dashboard/config:
+    get:
+      operationId: getDashboardConfig
+      tags: [dashboard]
+      summary: Bot configuration (owner ID, etc.)
+      parameters:
+        - in: header
+          name: x-dashboard-token
+          schema: { type: string }
+          required: true
+      responses:
+        "200":
+          description: Config
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BotConfig"
+
 components:
   schemas:
     HealthStatus:
       type: object
       properties:
-        status:
-          type: string
-      required:
-        - status
+        status: { type: string }
+      required: [status]
 
+    DashboardStats:
+      type: object
+      properties:
+        totalOrders: { type: integer }
+        totalAuthorizedUsers: { type: integer }
+        totalTouches: { type: integer }
+        activeAccounts: { type: integer }
+        totalCreditsHeld: { type: integer }
+        totalRevenueCents: { type: integer }
+      required:
+        - totalOrders
+        - totalAuthorizedUsers
+        - totalTouches
+        - activeAccounts
+        - totalCreditsHeld
+        - totalRevenueCents
+
+    Order:
+      type: object
+      properties:
+        id: { type: integer }
+        discordId: { type: string }
+        orderUuid: { type: string }
+        ddAccountId: { type: integer }
+        groupOrderUrl: { type: ["string", "null"] }
+        storeName: { type: ["string", "null"] }
+        totalCents: { type: integer }
+        creditsUsed: { type: integer }
+        status: { type: string }
+        trackingUrl: { type: ["string", "null"] }
+        createdAt: { type: string }
+      required:
+        - id
+        - discordId
+        - orderUuid
+        - ddAccountId
+        - totalCents
+        - creditsUsed
+        - status
+        - createdAt
+
+    DdAccount:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string }
+        isActive: { type: boolean }
+        addedBy: { type: string }
+        createdAt: { type: string }
+      required: [id, name, email, isActive, addedBy, createdAt]
+
+    ToggleResult:
+      type: object
+      properties:
+        ok: { type: boolean }
+        isActive: { type: boolean }
+      required: [ok, isActive]
+
+    AuthorizedUser:
+      type: object
+      properties:
+        id: { type: integer }
+        discordId: { type: string }
+        discordUsername: { type: string }
+        addedBy: { type: string }
+        addedAt: { type: string }
+      required: [id, discordId, discordUsername, addedBy, addedAt]
+
+    Touch:
+      type: object
+      properties:
+        id: { type: integer }
+        discordId: { type: string }
+        discordUsername: { type: string }
+        photoUrl: { type: string }
+        messageId: { type: string }
+        channelId: { type: string }
+        guildId: { type: string }
+        note: { type: ["string", "null"] }
+        createdAt: { type: string }
+      required:
+        - id
+        - discordId
+        - discordUsername
+        - photoUrl
+        - messageId
+        - channelId
+        - guildId
+        - createdAt
+
+    UserCredit:
+      type: object
+      properties:
+        id: { type: integer }
+        discordId: { type: string }
+        balance: { type: integer }
+        updatedAt: { type: string }
+      required: [id, discordId, balance, updatedAt]
+
+    BotConfig:
+      type: object
+      properties:
+        id: { type: integer }
+        ownerDiscordId: { type: string }
+        createdAt: { type: string }
+      required: [id, ownerDiscordId, createdAt]

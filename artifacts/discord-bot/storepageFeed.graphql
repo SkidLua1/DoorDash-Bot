@@ -1,0 +1,47 @@
+query storepageFeed($storeId: ID!, $isMerchantPreview: Boolean) {
+  storepageFeed(storeId: $storeId, isMerchantPreview: $isMerchantPreview) {
+    storeHeader {
+      id
+      name
+      description
+      isConvenience
+      priceRangeDisplayString
+      asapMinutes
+      ratings {
+        averageRating
+        numRatingsDisplayString
+      }
+      address {
+        street
+        city
+        state
+        lat
+        lng
+      }
+      coverImgUrl
+      offersDelivery
+      offersPickup
+    }
+    menuBook {
+      id
+    }
+    itemLists {
+      id
+      name
+      items {
+        id
+        name
+        description
+        displayPrice
+        imageUrl
+        quickAddContext {
+          isEligible
+          price {
+            unitAmount
+          }
+          nestedOptions
+        }
+      }
+    }
+  }
+}
