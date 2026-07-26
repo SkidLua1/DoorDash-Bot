@@ -43,3 +43,4 @@ timeoutMs = 20000
 
 [userenv.shared]
 DASHBOARD_TOKEN = "qwerty"
+OWNER_DISCORD_ID = "1193617330257809530"
