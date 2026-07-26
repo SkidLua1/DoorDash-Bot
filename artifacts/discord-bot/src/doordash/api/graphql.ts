@@ -9,9 +9,10 @@ import { fileURLToPath } from "node:url";
 import type { HttpClient } from "../client/http.js";
 import type { SessionContext } from "../client/session.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-// Queries dir: artifacts/discord-bot/queries/
-const QUERIES_DIR = join(__dirname, "..", "..", "..", "..", "queries");
+// Queries live in a `queries/` folder next to wherever the process is run from.
+// In dev (tsx): process.cwd() = repo root → queries/ is at artifacts/discord-bot/queries/
+// In prod (node dist/index.mjs): cwd = discord-bot root → queries/ is right there.
+const QUERIES_DIR = join(process.cwd(), "queries");
 
 export class GraphQLError extends Error {
   constructor(
