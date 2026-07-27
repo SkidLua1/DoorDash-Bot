@@ -1198,6 +1198,10 @@ async function deductCredits(discordId, amount) {
   return true;
 }
 async function addDdAccount(name, email, password, addedBy) {
+  const existing = await db.select({ id: ddAccountsTable.id }).from(ddAccountsTable).where((0, import_drizzle_orm.eq)(ddAccountsTable.email, email)).limit(1);
+  if (existing.length > 0) {
+    throw new Error(`An account with email ${email} is already registered.`);
+  }
   const encryptedPassword = encrypt(password);
   const rows = await db.insert(ddAccountsTable).values({ name, email, encryptedPassword, addedBy }).returning({ id: ddAccountsTable.id });
   return rows[0].id;
