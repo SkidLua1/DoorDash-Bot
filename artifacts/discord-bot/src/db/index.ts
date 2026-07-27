@@ -139,7 +139,7 @@ export async function addDdAccount(
   email: string,
   password: string,
   addedBy: string,
-)): Promise<number> {
+): Promise<number> {
     // Check for duplicate email before inserting to give a clear error message
     const existing = await db
       .select({ id: ddAccountsTable.id })
