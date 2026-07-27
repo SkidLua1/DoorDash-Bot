@@ -7,9 +7,11 @@ import { Users as UsersIcon, Shield } from 'lucide-react';
 import { safeFormat } from '../lib/dateUtils';
 
 export default function Users() {
-  const { data: users, isLoading } = useGetDashboardUsers({
+  const { data, isLoading } = useGetDashboardUsers({
     request: { headers: getAuthHeaders() }
   });
+
+  const users = Array.isArray(data) ? data : [];
 
   return (
     <div className="space-y-6">
@@ -20,7 +22,7 @@ export default function Users() {
         </div>
         <div className="bg-primary/10 text-primary px-3 py-1.5 rounded-md text-sm font-medium border border-primary/20 flex items-center gap-2">
           <Shield className="w-4 h-4" />
-          <span>{users?.length || 0} Total Active</span>
+          <span>{users.length} Total Active</span>
         </div>
       </div>
 
@@ -44,7 +46,7 @@ export default function Users() {
                   <TableCell><Skeleton className="h-4 w-24 ml-auto" /></TableCell>
                 </TableRow>
               ))
-            ) : !users || users.length === 0 ? (
+            ) : users.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-40 text-center">
                   <div className="flex flex-col items-center justify-center text-muted-foreground">
@@ -57,15 +59,9 @@ export default function Users() {
             ) : (
               users.map((user) => (
                 <TableRow key={user.id}>
-                  <TableCell className="font-medium text-foreground">
-                    {user.discordUsername}
-                  </TableCell>
-                  <TableCell className="font-mono text-muted-foreground text-sm">
-                    {user.discordId}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {user.addedBy}
-                  </TableCell>
+                  <TableCell className="font-medium text-foreground">{user.discordUsername}</TableCell>
+                  <TableCell className="font-mono text-muted-foreground text-sm">{user.discordId}</TableCell>
+                  <TableCell className="text-muted-foreground">{user.addedBy}</TableCell>
                   <TableCell className="text-right text-muted-foreground text-sm">
                     {safeFormat(user.addedAt, "MMM d, yyyy")}
                   </TableCell>

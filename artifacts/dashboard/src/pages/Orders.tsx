@@ -7,10 +7,12 @@ import { safeFormat } from '../lib/dateUtils';
 import { ExternalLink, Link2Off } from 'lucide-react';
 
 export default function Orders() {
-  const { data: orders, isLoading } = useGetDashboardOrders(
+  const { data, isLoading } = useGetDashboardOrders(
     { limit: 20, offset: 0 },
     { request: { headers: getAuthHeaders() } }
   );
+
+  const orders = Array.isArray(data) ? data : [];
 
   const getStatusBadge = (status: string) => {
     const s = status.toLowerCase();
@@ -58,7 +60,7 @@ export default function Orders() {
                   <TableCell><Skeleton className="h-4 w-20 ml-auto" /></TableCell>
                 </TableRow>
               ))
-            ) : !orders || orders.length === 0 ? (
+            ) : orders.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="h-32 text-center text-muted-foreground">
                   No orders found in the system.
@@ -68,9 +70,7 @@ export default function Orders() {
               orders.map((order) => (
                 <TableRow key={order.id} className="group">
                   <TableCell className="font-mono text-muted-foreground">#{order.id}</TableCell>
-                  <TableCell className="font-medium">
-                    {order.discordId}
-                  </TableCell>
+                  <TableCell className="font-medium">{order.discordId}</TableCell>
                   <TableCell>{order.storeName || <span className="text-muted-foreground opacity-50">Unknown</span>}</TableCell>
                   <TableCell className="text-right font-mono">${(order.totalCents / 100).toFixed(2)}</TableCell>
                   <TableCell className="text-right font-mono text-muted-foreground">{order.creditsUsed}</TableCell>

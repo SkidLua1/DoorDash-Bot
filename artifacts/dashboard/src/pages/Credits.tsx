@@ -7,15 +7,14 @@ import { Coins, AlertTriangle } from 'lucide-react';
 import { safeFormat } from '../lib/dateUtils';
 
 export default function Credits() {
-  const { data: credits, isLoading } = useGetDashboardCredits({
+  const { data, isLoading } = useGetDashboardCredits({
     request: { headers: getAuthHeaders() }
   });
 
-  // Sort by balance descending
   const sortedCredits = React.useMemo(() => {
-    if (!credits) return [];
-    return [...credits].sort((a, b) => b.balance - a.balance);
-  }, [credits]);
+    if (!Array.isArray(data)) return [];
+    return [...data].sort((a, b) => b.balance - a.balance);
+  }, [data]);
 
   return (
     <div className="space-y-6">
@@ -55,13 +54,11 @@ export default function Credits() {
               sortedCredits.map((credit) => {
                 const isZero = credit.balance === 0;
                 return (
-                  <TableRow 
+                  <TableRow
                     key={credit.id}
                     className={isZero ? "bg-destructive/5 hover:bg-destructive/10" : ""}
                   >
-                    <TableCell className="font-mono font-medium">
-                      {credit.discordId}
-                    </TableCell>
+                    <TableCell className="font-mono font-medium">{credit.discordId}</TableCell>
                     <TableCell className="text-right">
                       <div className={`inline-flex items-center justify-end gap-1.5 font-mono font-bold ${isZero ? 'text-destructive' : 'text-primary'}`}>
                         {credit.balance}
