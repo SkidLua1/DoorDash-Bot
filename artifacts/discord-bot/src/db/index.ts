@@ -139,15 +139,26 @@ export async function addDdAccount(
   email: string,
   password: string,
   addedBy: string,
-): Promise<number> {
-  const encryptedPassword = encrypt(password);
-  const rows = await db
-    .insert(ddAccountsTable)
-    .values({ name, email, encryptedPassword, addedBy })
-    .returning({ id: ddAccountsTable.id });
+)): Promise<number> {
+    // Check for duplicate email before inserting to give a clear error message
+    const existing = await db
+      .select({ id: ddAccountsTable.id })
+      .from(ddAccountsTable)
+      .where(eq(ddAccountsTable.email, email))
+      .limit(1);
 
-  return rows[0].id;
-}
+    if (existing.length > 0) {
+      throw new Error(`An account with email ${email} is already registered.`);
+    }
+
+    const encryptedPassword = encrypt(password);
+    const rows = await db
+      .insert(ddAccountsTable)
+      .values({ name, email, encryptedPassword, addedBy })
+      .returning({ id: ddAccountsTable.id });
+
+    return rows[0].id;
+    }
 
 export async function getDdAccounts(): Promise<
   { id: number; name: string; email: string; isActive: boolean }[]
