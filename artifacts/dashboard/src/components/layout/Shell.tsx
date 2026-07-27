@@ -5,6 +5,14 @@ import { useGetDashboardStats, getGetDashboardStatsQueryKey } from '@workspace/a
 import { getAuthHeaders } from '../../lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
+function LoadingScreen() {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+}
+
 export function Shell({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -37,16 +45,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
     }
   }, [isError, isSuccess, location, setLocation]);
 
-  if (isLoading || isAuthenticated === null) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated && location !== '/login') {
-    return null; // Will redirect
+  // Show spinner while checking auth or waiting for redirect
+  if (isLoading || isAuthenticated === null || isAuthenticated === false) {
+    return <LoadingScreen />;
   }
 
   if (location === '/login') {

@@ -3,7 +3,7 @@ import { useGetDashboardTouches } from '@workspace/api-client-react';
 import { getAuthHeaders } from '../lib/api';
 import { Skeleton } from '../components/ui';
 import { Image as ImageIcon, X, MapPin } from 'lucide-react';
-import { format } from 'date-fns';
+import { safeFormat } from '../lib/dateUtils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Touches() {
@@ -46,7 +46,7 @@ export default function Touches() {
             >
               <img 
                 src={touch.photoUrl} 
-                alt={`Delivery to ${touch.discordUsername}`}
+                alt={`Delivery by ${touch.discordUsername}`}
                 className="w-full h-auto object-cover transform transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
               />
@@ -57,7 +57,7 @@ export default function Touches() {
                   <span>{touch.discordUsername}</span>
                 </div>
                 <div className="flex items-center justify-between mt-1 text-xs text-white/70">
-                  <span>{format(new Date(touch.createdAt), "MMM d, yyyy")}</span>
+                  <span>{safeFormat(touch.createdAt, "MMM d, yyyy")}</span>
                   {touch.note && (
                     <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded text-[10px]">
                       <MapPin className="w-3 h-3" /> Note
@@ -94,7 +94,7 @@ export default function Touches() {
               src={selectedPhoto} 
               alt="Full size delivery proof" 
               className="max-w-full max-h-[90vh] object-contain rounded-md shadow-2xl border border-white/10"
-              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image itself
+              onClick={(e) => e.stopPropagation()}
             />
           </motion.div>
         )}

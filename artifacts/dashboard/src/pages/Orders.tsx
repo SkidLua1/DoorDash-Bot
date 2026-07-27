@@ -3,7 +3,7 @@ import { useGetDashboardOrders } from '@workspace/api-client-react';
 import { getAuthHeaders } from '../lib/api';
 import { Badge, Skeleton } from '../components/ui';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { format } from 'date-fns';
+import { safeFormat } from '../lib/dateUtils';
 import { ExternalLink, Link2Off } from 'lucide-react';
 
 export default function Orders() {
@@ -87,7 +87,7 @@ export default function Orders() {
                     )}
                   </TableCell>
                   <TableCell className="text-right text-muted-foreground text-sm whitespace-nowrap">
-                    {format(new Date(order.createdAt), "MMM d, HH:mm")}
+                    {safeFormat(order.createdAt, "MMM d, HH:mm")}
                   </TableCell>
                 </TableRow>
               ))

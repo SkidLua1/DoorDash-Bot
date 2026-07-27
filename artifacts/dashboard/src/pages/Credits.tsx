@@ -4,7 +4,7 @@ import { getAuthHeaders } from '../lib/api';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 import { Skeleton } from '../components/ui';
 import { Coins, AlertTriangle } from 'lucide-react';
-import { format } from 'date-fns';
+import { safeFormat } from '../lib/dateUtils';
 
 export default function Credits() {
   const { data: credits, isLoading } = useGetDashboardCredits({
@@ -74,7 +74,7 @@ export default function Credits() {
                       )}
                     </TableCell>
                     <TableCell className="text-right text-muted-foreground text-sm">
-                      {format(new Date(credit.updatedAt), "MMM d, yyyy HH:mm")}
+                      {safeFormat(credit.updatedAt, "MMM d, yyyy HH:mm")}
                     </TableCell>
                   </TableRow>
                 );

@@ -4,7 +4,7 @@ import { getAuthHeaders } from '../lib/api';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 import { Skeleton } from '../components/ui';
 import { Users as UsersIcon, Shield } from 'lucide-react';
-import { format } from 'date-fns';
+import { safeFormat } from '../lib/dateUtils';
 
 export default function Users() {
   const { data: users, isLoading } = useGetDashboardUsers({
@@ -67,7 +67,7 @@ export default function Users() {
                     {user.addedBy}
                   </TableCell>
                   <TableCell className="text-right text-muted-foreground text-sm">
-                    {format(new Date(user.addedAt), "MMM d, yyyy")}
+                    {safeFormat(user.addedAt, "MMM d, yyyy")}
                   </TableCell>
                 </TableRow>
               ))

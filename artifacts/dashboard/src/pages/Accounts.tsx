@@ -3,7 +3,7 @@ import { useGetDashboardAccounts, useToggleDashboardAccount, getGetDashboardAcco
 import { getAuthHeaders } from '../lib/api';
 import { Card, CardHeader, CardTitle, CardContent, Switch, Skeleton, Badge } from '../components/ui';
 import { ShieldCheck, ShieldAlert, Mail, Calendar } from 'lucide-react';
-import { format } from 'date-fns';
+import { safeFormat } from '../lib/dateUtils';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function Accounts() {
@@ -105,7 +105,7 @@ export default function Accounts() {
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Calendar className="w-4 h-4" />
-                  <span>Added {format(new Date(account.createdAt), "MMM d, yyyy")}</span>
+                  <span>Added {safeFormat(account.createdAt, "MMM d, yyyy")}</span>
                 </div>
                 <div className="pt-3 mt-3 border-t border-border/50 flex justify-between items-center text-xs">
                   <span className="text-muted-foreground">ID: {account.id}</span>
