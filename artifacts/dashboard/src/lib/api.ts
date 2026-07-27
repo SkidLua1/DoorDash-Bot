@@ -5,9 +5,7 @@ export function getAuthHeaders() {
 
 /**
  * The API base URL.
- * In development, Vite's proxy forwards /api → localhost:8080.
- * On Vercel (or any static host), set VITE_API_URL to your deployed API server
- * e.g. https://your-api.replit.app
- * Without it, /api calls hit the static host and return HTML — not JSON.
+ * Falls back to the bot-hosting.net server when VITE_API_URL is not set.
  */
-export const API_BASE_URL: string = import.meta.env.VITE_API_URL ?? "";
+export const API_BASE_URL: string =
+  import.meta.env.VITE_API_URL ?? "https://hboy98ny4u.apps.bot-hosting.cloud";
