@@ -1,0 +1,12 @@
+{
+  "buildCommand": "pnpm --filter @workspace/dashboard run build",
+  "outputDirectory": "artifacts/dashboard/dist/public",
+  "installCommand": "pnpm install",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
