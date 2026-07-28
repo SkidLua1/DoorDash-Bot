@@ -22,8 +22,14 @@ export default function Auth() {
       await getDashboardStats({ headers: { "x-dashboard-token": token } });
       localStorage.setItem("dashboard_token", token);
       setLocation('/');
-    } catch (err) {
-      setError('Invalid or unauthorized token.');
+    } catch (err: any) {
+      if (err?.status === 401) {
+        setError('Invalid token — check your DASHBOARD_TOKEN on the server.');
+      } else if (err?.status) {
+        setError(`Server error ${err.status}: ${err.message}`);
+      } else {
+        setError(`Connection failed: ${err?.message ?? 'Unknown error'}`);
+      }
     } finally {
       setLoading(false);
     }
